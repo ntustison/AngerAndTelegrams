@@ -15,13 +15,25 @@ output:
     self_contained: false
 ---
 
-
 # Demographics
+
+## Subset Criteria
+
+```{r,results = 'asis', echo = F}
+results <- read.csv( './Data/labelresultsAnts.csv' )
+resultsSubset <- results[which( results$gender == 1 & results$age >= 6 & results$age <= 35 & results$handedness == 'R' ),]
+write.csv( resultsSubset, './Data/labelresultsANTsSubset.csv', quote = FALSE, row.names = FALSE )
+```
+
+* Males
+* age: [6, 35]
+* handedness:  right
+
 
 ## All sites
 
 ```{r,results = 'asis', echo = F}
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 numberOfStudies <- nrow( results )
 numberOfMales <- length( which( results$gender == 1 ) )
@@ -43,7 +55,7 @@ cat( "  rights = ", numberOfRights, ", lefts = ", numberOfLefts, ", ambis = ", n
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 ageDiagnosisDf <- data.frame( AGE = results$age, DIAGNOSIS = results$dx.group )
 
@@ -65,7 +77,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 tivDiagnosisDf <- data.frame( TIV = results$total.volume, DIAGNOSIS = results$dx.group )
 
@@ -85,7 +97,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 csfDiagnosisDf <- data.frame( CSF = results$csf.volume, DIAGNOSIS = results$dx.group )
 
@@ -104,7 +116,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 gmDiagnosisDf <- data.frame( GM = results$gray.matter.volume, DIAGNOSIS = results$dx.group )
 
@@ -123,7 +135,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 wmDiagnosisDf <- data.frame( WM = results$white.matter.volume, DIAGNOSIS = results$dx.group )
 
@@ -142,7 +154,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 dgmDiagnosisDf <- data.frame( DGM = results$deep.gray.matter.volume, DIAGNOSIS = results$dx.group )
 
@@ -161,7 +173,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 thickDiagnosisDf <- data.frame( THICKNESS = results$total.mean.thickness, DIAGNOSIS = results$dx.group )
 
@@ -181,7 +193,7 @@ x <- dev.off()
 ## Site demographics
 
 ```{r,results = 'asis', echo = F}
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 numberOfStudies <- nrow( results )
 
@@ -204,7 +216,7 @@ for( q in levels( results$site ) )
 ## Site demographics (continued)
 
 ```{r,results = 'asis', echo = F}
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 numberOfStudies <- nrow( results )
 
@@ -229,7 +241,7 @@ for( q in levels( results$site ) )
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 ageDiagnosisDf <- data.frame( AGE = results$age, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -253,7 +265,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 tivDiagnosisDf <- data.frame( TIV = results$total.volume, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -274,7 +286,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 csfDiagnosisDf <- data.frame( CSF = results$csf.volume, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -295,7 +307,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 gmDiagnosisDf <- data.frame( GM = results$gray.matter.volume, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -316,7 +328,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 wmDiagnosisDf <- data.frame( WM = results$white.matter.volume, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -337,7 +349,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 dgmDiagnosisDf <- data.frame( DGM = results$deep.gray.matter.volume, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -358,7 +370,7 @@ x <- dev.off()
 ```{r,results = 'asis', echo = F}
 library( ggplot2 )
 
-results <- read.csv( 'Data/labelresultsAnts.csv' )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 
 thDiagnosisDf <- data.frame( TH = results$total.mean.thickness, DIAGNOSIS = results$dx.group, SITE = results$site )
 
@@ -373,3 +385,15 @@ x <- dev.off()
 ```
 
 ![](Figures/siteThVolumeDistribution.png)
+
+
+# Paper results
+
+## Results:  Intracranial volume
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( total.volume ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html")
+```
