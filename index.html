@@ -95,19 +95,36 @@ code > span.er { color: #ff0000; font-weight: bold; }
     <h3 class="date">November 23, 2014</h3>
 </section>
 
-<section><section id="demographics" class="titleslide slide level1"><h1>Demographics</h1></section><section id="subset-criteria" class="slide level2">
-<h1>Subset Criteria</h1>
-<ul>
-<li>Males</li>
-<li>age: [6, 35]</li>
-<li>handedness: right</li>
-</ul>
+<section><section id="demographics" class="titleslide slide level1"><h1>Demographics</h1></section><section id="preprocessing-subset-and-matching" class="slide level2">
+<h1>Preprocessing: subset and matching</h1>
+<pre class="sourceCode r"><code class="sourceCode r">results &lt;-<span class="st"> </span><span class="kw">read.csv</span>( <span class="st">&#39;./Data/labelresultsAnts.csv&#39;</span> )
+resultsSubset &lt;-<span class="st"> </span>results[<span class="kw">which</span>( results$gender ==<span class="st"> </span><span class="dv">1</span> &amp;<span class="st"> </span>results$age &gt;=<span class="st"> </span><span class="dv">6</span> &amp;<span class="st"> </span>results$age &lt;=<span class="st"> </span><span class="dv">35</span> &amp;<span class="st"> </span>results$handedness ==<span class="st"> &#39;R&#39;</span> ),]
+drops &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;area.5th.ventricle&quot;</span>, <span class="st">&quot;area.left.lesion&quot;</span>, <span class="st">&quot;area.right.lesion&quot;</span>, <span class="st">&quot;area.left.vessel&quot;</span>, <span class="st">&quot;area.right.vessel&quot;</span>, <span class="st">&quot;area.optic.chiasm&quot;</span>,
+<span class="st">&quot;volume.5th.ventricle&quot;</span>, <span class="st">&quot;volume.left.lesion&quot;</span>, <span class="st">&quot;volume.right.lesion&quot;</span>, <span class="st">&quot;volume.left.vessel&quot;</span>, <span class="st">&quot;volume.right.vessel&quot;</span>, <span class="st">&quot;volume.optic.chiasm&quot;</span> )
+resultsSubset &lt;-<span class="st"> </span>resultsSubset[, !( <span class="kw">names</span>( resultsSubset ) %in%<span class="st"> </span>drops )]
+
+<span class="co"># match the data based on age and fiq</span>
+<span class="kw">library</span>( MatchIt )</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">resultsDf &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">subject.id =</span> resultsSubset$subject.id,
+                         <span class="dt">dx.group =</span> resultsSubset$dx.group,
+                         <span class="dt">age =</span> resultsSubset$age,
+                         <span class="dt">fiq =</span> resultsSubset$fiq
+                       )
+resultsDf$dx.group &lt;-<span class="st"> </span><span class="kw">as.numeric</span>( resultsDf$dx.group ) -<span class="st"> </span><span class="dv">1</span>
+resultsDf &lt;-<span class="st"> </span><span class="kw">na.omit</span>( resultsDf )
+resultsDf &lt;-<span class="st"> </span><span class="kw">match.data</span>( <span class="kw">matchit</span>( dx.group ~<span class="st"> </span>age +<span class="st"> </span>fiq, <span class="dt">data =</span> resultsDf, <span class="dt">method =</span> <span class="st">&quot;nearest&quot;</span>, <span class="dt">discard =</span> <span class="st">&quot;both&quot;</span> ) )</code></pre>
+<pre><code>## Warning: Fewer control than treated units and matching without
+## replacement.  Not all treated units will receive a match.  Treated units
+## will be matched in the order specified by m.order: largest</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">resultsMatched &lt;-<span class="st"> </span>resultsSubset[<span class="kw">which</span>( <span class="kw">is.element</span>( resultsSubset$subject.id, resultsDf$subject.id ) ), ]
+<span class="kw">write.csv</span>( resultsMatched, <span class="st">&#39;./Data/labelresultsANTsSubset.csv&#39;</span>, <span class="dt">quote =</span> <span class="ot">FALSE</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span> )</code></pre>
 </section><section id="all-sites" class="slide level2">
 <h1>All sites</h1>
-<p>Total number of studies = 506</p>
-<p>males = 506, females = 0</p>
-<p>autism = 240, controls = 266</p>
-<p>rights = 506, lefts = 0, ambis = 0</p>
+<p>Total number of studies = 450</p>
+<p>males = 450, females = 0</p>
+<p>autism = 225, controls = 225</p>
+<p>rights = 450, lefts = 0, ambis = 0</p>
 </section><section id="age-distribution" class="slide level2">
 <h1>Age distribution</h1>
 <p><img src="Figures/ageDistribution.png" /></p>
@@ -133,10 +150,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </section></section>
 <section><section id="per-site-demographics" class="titleslide slide level1"><h1>Per site demographics</h1></section><section id="site-demographics" class="slide level2">
 <h1>Site demographics</h1>
-<p>CALTECH: n = 12 (males = 12, females = 0)<br /> CMU: n = 15 (males = 15, females = 0)<br /> KKI: n = 33 (males = 33, females = 0)<br /> LEUVEN_1: n = 25 (males = 25, females = 0)<br /> LEUVEN_2: n = 24 (males = 24, females = 0)<br /> MAX_MUN: n = 40 (males = 40, females = 0)<br /> OHSU: n = 25 (males = 25, females = 0)<br /> OLIN: n = 23 (males = 23, females = 0)<br /> PITT: n = 39 (males = 39, females = 0)<br /> SDSU: n = 22 (males = 22, females = 0)</p>
+<p>CALTECH: n = 11 (males = 11, females = 0)<br /> CMU: n = 15 (males = 15, females = 0)<br /> KKI: n = 27 (males = 27, females = 0)<br /> LEUVEN_1: n = 25 (males = 25, females = 0)<br /> MAX_MUN: n = 38 (males = 38, females = 0)<br /> OHSU: n = 19 (males = 19, females = 0)<br /> OLIN: n = 22 (males = 22, females = 0)<br /> PITT: n = 36 (males = 36, females = 0)<br /> SDSU: n = 22 (males = 22, females = 0)<br /> STANFORD: n = 18 (males = 18, females = 0)</p>
 </section><section id="site-demographics-continued" class="slide level2">
 <h1>Site demographics (continued)</h1>
-<p>STANFORD: n = 25 (males = 25, females = 0)<br /> TRINITY: n = 43 (males = 43, females = 0)<br /> UCLA_1: n = 54 (males = 54, females = 0)<br /> UCLA_2: n = 18 (males = 18, females = 0)<br /> UM_1: n = 53 (males = 53, females = 0)<br /> UM_2: n = 27 (males = 27, females = 0)<br /> YALE: n = 28 (males = 28, females = 0)</p>
+<p>TRINITY: n = 43 (males = 43, females = 0)<br /> UCLA_1: n = 53 (males = 53, females = 0)<br /> UCLA_2: n = 18 (males = 18, females = 0)<br /> UM_1: n = 50 (males = 50, females = 0)<br /> UM_2: n = 27 (males = 27, females = 0)<br /> YALE: n = 26 (males = 26, females = 0)</p>
 </section><section id="age" class="slide level2">
 <h1>Age</h1>
 <p><img src="Figures/siteAgeDistribution.png" /></p>
@@ -162,15 +179,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </section></section>
 <section><section id="paper-results" class="titleslide slide level1"><h1>Paper results</h1></section><section id="results-intracranial-volume" class="slide level2">
 <h1>Results: Intracranial volume</h1>
-<!-- ANOVA:  `total.volume ~ dx.group + site + age + fiq` -->
-
-
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>( xtable )
 results &lt;-<span class="st"> </span><span class="kw">read.csv</span>( <span class="st">&#39;./Data/labelresultsAntsSubset.csv&#39;</span> )
 fit &lt;-<span class="st"> </span><span class="kw">aov</span>( total.volume ~<span class="st"> </span>dx.group +<span class="st"> </span>site +<span class="st"> </span>age +<span class="st"> </span>fiq, <span class="dt">data =</span> results )
-<span class="kw">print</span>(<span class="kw">xtable</span>(<span class="kw">anova</span>(fit)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</code></pre>
+<span class="kw">print</span>( <span class="kw">xtable</span>( <span class="kw">anova</span>( fit ) ), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span> )</code></pre>
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Mon Nov 24 15:46:39 2014 -->
+<!-- Mon Nov 24 21:41:58 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> 
 Df
@@ -188,24 +202,24 @@ dx.group
 </TD> <TD align="right"> 
 1
 </TD> <TD align="right"> 
-37011484306.78
+635506407.47
 </TD> <TD align="right"> 
-37011484306.78
+635506407.47
 </TD> <TD align="right"> 
-2.21
+0.04
 </TD> <TD align="right"> 
-0.1378
+0.8445
 </TD> </TR>
   <TR> <TD> 
 site
 </TD> <TD align="right"> 
 15
 </TD> <TD align="right"> 
-3172830475532.21
+2744732545213.81
 </TD> <TD align="right"> 
-211522031702.15
+182982169680.92
 </TD> <TD align="right"> 
-12.63
+11.09
 </TD> <TD align="right"> 
 0.0000
 </TD> </TR>
@@ -214,11 +228,11 @@ age
 </TD> <TD align="right"> 
 1
 </TD> <TD align="right"> 
-414311471003.27
+454992242535.23
 </TD> <TD align="right"> 
-414311471003.27
+454992242535.23
 </TD> <TD align="right"> 
-24.74
+27.58
 </TD> <TD align="right"> 
 0.0000
 </TD> </TR>
@@ -227,22 +241,22 @@ fiq
 </TD> <TD align="right"> 
 1
 </TD> <TD align="right"> 
-83075232611.66
+2332337220.80
 </TD> <TD align="right"> 
-83075232611.66
+2332337220.80
 </TD> <TD align="right"> 
-4.96
+0.14
 </TD> <TD align="right"> 
-0.0264
+0.7071
 </TD> </TR>
   <TR> <TD> 
 Residuals
 </TD> <TD align="right"> 
-463
+431
 </TD> <TD align="right"> 
-7754563703255.55
+7111246085396.22
 </TD> <TD align="right"> 
-16748517717.61
+16499410870.99
 </TD> <TD align="right">  </TD> <TD align="right">  </TD> </TR>
    </TABLE>
 

@@ -17,18 +17,30 @@ output:
 
 # Demographics
 
-## Subset Criteria
+## Preprocessing:  subset and matching
 
-```{r,results = 'asis', echo = F}
+```{r,results = 'asis', echo = T}
 results <- read.csv( './Data/labelresultsAnts.csv' )
 resultsSubset <- results[which( results$gender == 1 & results$age >= 6 & results$age <= 35 & results$handedness == 'R' ),]
-write.csv( resultsSubset, './Data/labelresultsANTsSubset.csv', quote = FALSE, row.names = FALSE )
+drops <- c( "area.5th.ventricle", "area.left.lesion", "area.right.lesion", "area.left.vessel", "area.right.vessel", "area.optic.chiasm",
+"volume.5th.ventricle", "volume.left.lesion", "volume.right.lesion", "volume.left.vessel", "volume.right.vessel", "volume.optic.chiasm" )
+resultsSubset <- resultsSubset[, !( names( resultsSubset ) %in% drops )]
+
+# match the data based on age and fiq
+library( MatchIt )
+
+resultsDf <- data.frame( subject.id = resultsSubset$subject.id,
+                         dx.group = resultsSubset$dx.group,
+                         age = resultsSubset$age,
+                         fiq = resultsSubset$fiq
+                       )
+resultsDf$dx.group <- as.numeric( resultsDf$dx.group ) - 1
+resultsDf <- na.omit( resultsDf )
+resultsDf <- match.data( matchit( dx.group ~ age + fiq, data = resultsDf, method = "nearest", discard = "both" ) )
+
+resultsMatched <- resultsSubset[which( is.element( resultsSubset$subject.id, resultsDf$subject.id ) ), ]
+write.csv( resultsMatched, './Data/labelresultsANTsSubset.csv', quote = FALSE, row.names = FALSE )
 ```
-
-* Males
-* age: [6, 35]
-* handedness:  right
-
 
 ## All sites
 
@@ -386,7 +398,6 @@ x <- dev.off()
 
 ![](Figures/siteThVolumeDistribution.png)
 
-
 # Paper results
 
 ## Results:  Intracranial volume
@@ -395,5 +406,5 @@ x <- dev.off()
 library( xtable )
 results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 fit <- aov( total.volume ~ dx.group + site + age + fiq, data = results )
-print( xtable( anova( fit ) ), type = "html")
+print( xtable( anova( fit ) ), type = "html" )
 ```
