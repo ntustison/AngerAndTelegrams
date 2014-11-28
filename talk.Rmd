@@ -400,11 +400,492 @@ x <- dev.off()
 
 # Paper results
 
-## Results:  Intracranial volume
+# Results:  Intracranial volume
+
+## All site results:  Intracranial volume
 
 ```{r,results = 'asis', echo = T}
 library( xtable )
 results <- read.csv( './Data/labelresultsAntsSubset.csv' )
 fit <- aov( total.volume ~ dx.group + site + age + fiq, data = results )
 print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Intracranial volume
+
+`total.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+  age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+  {
+  if( count < 8 )
+    {
+    resultsPerSite <- results[which( results$site == site ),]
+    fit <- anova( aov( total.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+    sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+    significance <- rbind( significance, sig )
+    }
+  count <- count + 1
+  }
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Intracranial volume
+
+`total.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+  {
+  if( count >= 8 )
+    {
+    resultsPerSite <- results[which( results$site == site ),]
+    fit <- anova( aov( total.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+    sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+    significance <- rbind( significance, sig )
+    }
+  count <- count + 1
+  }
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+# Results:  Amygdala volume
+
+## All site results:  Amygdala volume (right)
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( volume.right.amygdala ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Amygdala volume (right)
+
+`volume.right.amygdala ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( volume.right.amygdala ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Amygdala volume (right)
+
+`volume.right.amygdala ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( volume.right.amygdala ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## All site results:  Amygdala volume (left)
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( volume.left.amygdala ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Amygdala volume (left)
+
+`volume.left.amygdala ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( volume.left.amygdala ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Amygdala volume (left)
+
+`volume.left.amygdala ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( volume.left.amygdala ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+
+# Results:  CSF volume
+
+## All sites:  CSF volume
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( csf.volume ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  CSF volume
+
+`csf.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( csf.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  CSF volume
+
+`csf.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( csf.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+# Results:  Gray matter volume
+
+## All sites:  Gray matter volume
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( gray.matter.volume ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Gray matter volume
+
+`gray.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( gray.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Gray matter volume
+
+`gray.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( gray.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+
+# Results:  White matter volume
+
+## All sites:  White matter volume
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( white.matter.volume ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  White matter volume
+
+`white.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( white.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  White matter volume
+
+`white.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( white.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+
+# Results:  Deep gray matter volume
+
+## All sites:  Deep gray matter volume
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( deep.gray.matter.volume ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Deep gray matter volume
+
+`deep.gray.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( deep.gray.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Deep gray matter volume
+
+`deep.gray.matter.volume ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( deep.gray.matter.volume ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+
+# Results:  Total mean thickness
+
+## All sites:  Total mean thickness
+
+```{r,results = 'asis', echo = T}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- aov( total.mean.thickness ~ dx.group + site + age + fiq, data = results )
+print( xtable( anova( fit ) ), type = "html" )
+```
+
+## Per site results:  Total mean thickness
+
+`total.mean.thickness ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count < 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( total.mean.thickness ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
+```
+
+## Per site results (cont.):  Total mean thickness
+
+`total.mean.thickness ~ dx.group + age + fiq`
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+significance <- data.frame( site = character(), dx.Pvalue = numeric(),
+age.Pvalue = numeric(), fiq.Pvalue = numeric(), stringsAsFactors = TRUE )
+
+count <- 0
+for( site in levels( results$site ) )
+{
+ if( count >= 8 )
+ {
+  resultsPerSite <- results[which( results$site == site ),]
+  fit <- anova( aov( total.mean.thickness ~ dx.group + age + fiq, data = resultsPerSite ) )
+  sig <- data.frame( site = site, dx.Pvalue = fit[,5][1], age.Pvalue = fit[,5][2], fiq.Pvalue = fit[,5][3] )
+  significance <- rbind( significance, sig )
+ }
+ count <- count + 1
+}
+print( xtable( significance ), type = "html", include.rownames = FALSE )
 ```
