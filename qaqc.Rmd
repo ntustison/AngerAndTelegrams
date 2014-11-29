@@ -1,0 +1,145 @@
+# QA/QC
+
+## Age prediction of controls:  Thickness
+
+<!--
+```{r,results = 'asis', echo = F}
+
+###################################################################################################
+#
+#  Get the data including IXI, NKI, Oasis, Kirby
+#
+###################################################################################################
+
+library( RCurl )
+
+x <- getURL( "https://raw.githubusercontent.com/ntustison/KapowskiChronicles/master/analytics2/labelresultsANTsI.csv" )
+resultsIxi <- read.csv( text = x )
+resultsIxi <- resultsIxi[which( resultsIxi$SEX == 1 & resultsIxi$AGE >= 6 & resultsIxi$AGE <= 35 ),]
+colnames( resultsIxi )[which( names( resultsIxi ) == "ID")] <- "subject.id"
+colnames( resultsIxi )[which( names( resultsIxi ) == "AGE")] <- "age"
+colnames( resultsIxi )[which( names( resultsIxi ) == "VOLUME")] <- "total.volume"
+colnames( resultsIxi )[which( names( resultsIxi ) == "SEX")] <- "gender"
+colnames( resultsIxi )[which( names( resultsIxi ) == "SITE")] <- "site"
+resultsIxi <- cbind( resultsIxi, rep( "Control", nrow( resultsIxi ) ) )
+colnames( resultsIxi )[ncol( resultsIxi )] <- "dx.group"
+
+x <- getURL( "https://raw.githubusercontent.com/ntustison/KapowskiChronicles/master/analytics2/labelresultsANTsO.csv" )
+resultsOasis <- read.csv( text = x )
+resultsOasis <- resultsOasis[which( resultsOasis$SEX == 1 & resultsOasis$AGE >= 6 & resultsOasis$AGE <= 35 ),]
+colnames( resultsOasis )[which( names( resultsOasis ) == "ID")] <- "subject.id"
+colnames( resultsOasis )[which( names( resultsOasis ) == "AGE")] <- "age"
+colnames( resultsOasis )[which( names( resultsOasis ) == "VOLUME")] <- "total.volume"
+colnames( resultsOasis )[which( names( resultsOasis ) == "SEX")] <- "gender"
+colnames( resultsOasis )[which( names( resultsOasis ) == "SITE")] <- "site"
+resultsOasis <- cbind( resultsOasis, rep( "Control", nrow( resultsOasis ) ) )
+colnames( resultsOasis )[ncol( resultsOasis )] <- "dx.group"
+
+x <- getURL( "https://raw.githubusercontent.com/ntustison/KapowskiChronicles/master/analytics2/labelresultsANTsN.csv" )
+resultsNki <- read.csv( text = x )
+resultsNki <- resultsNki[which( resultsNki$SEX == 1 & resultsNki$AGE >= 6 & resultsNki$AGE <= 35 ),]
+colnames( resultsNki )[which( names( resultsNki ) == "ID")] <- "subject.id"
+colnames( resultsNki )[which( names( resultsNki ) == "AGE")] <- "age"
+colnames( resultsNki )[which( names( resultsNki ) == "VOLUME")] <- "total.volume"
+colnames( resultsNki )[which( names( resultsNki ) == "SEX")] <- "gender"
+colnames( resultsNki )[which( names( resultsNki ) == "SITE")] <- "site"
+resultsNki <- cbind( resultsNki, rep( "Control", nrow( resultsNki ) ) )
+colnames( resultsNki )[ncol( resultsNki )] <- "dx.group"
+
+x <- getURL( "https://raw.githubusercontent.com/ntustison/KapowskiChronicles/master/analytics2/labelresultsANTsK.csv" )
+resultsKirby <- read.csv( text = x )
+resultsKirby <- resultsKirby[which( resultsKirby$SEX == 1 & resultsKirby$AGE >= 6 & resultsKirby$AGE <= 35 ),]
+colnames( resultsKirby )[which( names( resultsKirby ) == "ID")] <- "subject.id"
+colnames( resultsKirby )[which( names( resultsKirby ) == "AGE")] <- "age"
+colnames( resultsKirby )[which( names( resultsKirby ) == "VOLUME")] <- "total.volume"
+colnames( resultsKirby )[which( names( resultsKirby ) == "SEX")] <- "gender"
+colnames( resultsKirby )[which( names( resultsKirby ) == "SITE")] <- "site"
+resultsKirby <- cbind( resultsKirby, rep( "Control", nrow( resultsKirby ) ) )
+colnames( resultsKirby )[ncol( resultsKirby )] <- "dx.group"
+
+resultsAbide <- read.csv( './Data/labelresultsAntsSubset.csv' )
+resultsAbide <- cbind( resultsAbide$subject.id,
+                       resultsAbide$site,
+                       resultsAbide$gender,
+                       resultsAbide$age,
+                       resultsAbide$dx.group,
+                       resultsAbide$total.volume,
+                       resultsAbide[, grep('^thickness.', names( resultsAbide ) )] )
+colnames( resultsAbide )[1:6] <- c( "subject.id", "site", "gender", "age", "dx.group", "total.volume" )
+resultsAbide <- resultsAbide[complete.cases( resultsAbide ),]
+colnames( resultsAbide ) <- gsub( "thickness.", '', colnames( resultsAbide ) )
+
+resultsAll <- rbind( resultsAbide, resultsIxi, resultsKirby, resultsNki, resultsOasis )
+resultsAllControl <- resultsAll[which( resultsAll$dx.group == "Control" ),]
+resultsAllAutism <- resultsAll[which( resultsAll$dx.group == "Autism" ),]
+
+###################################################################################################
+#
+#  Get the data including IXI, NKI, Oasis, Kirby
+#
+###################################################################################################
+
+library( caret )
+library( randomForest )
+library( ggplot2 )
+
+nPermutations <- 100
+drops <- c( "subject.id", "site", "gender", "dx.group" )
+
+resultsData <- data.frame( Site = character( 0 ), RMSE = numeric( 0 ), Dx = character( 0 ) )
+
+for( site in levels( resultsAllControl$site ) )
+  {
+  resultsAllControlSiteRemoved <- resultsAllControl[which( resultsAllControl$site != site ),]
+  testingDataControls <- resultsAllControl[which( resultsAllControl$site == site ),]
+  testingDataControls <- testingDataControls[, !( names( testingDataControls ) %in% drops )]
+
+  resultsAllAutismSiteRemoved <- resultsAllAutism[which( resultsAllAutism$site != site ),]
+  testingDataAutism <- resultsAllAutism[which( resultsAllAutism$site == site ),]
+  testingDataAutism <- testingDataAutism[, !( names( testingDataAutism ) %in% drops )]
+
+  cat( "Site = ", site, "\n", sep = '' )
+
+  pb <- txtProgressBar( min = 1, max = nPermutations, style = 3 )
+  for( p in 1:nPermutations )
+    {
+    setTxtProgressBar( pb, p )
+    trainingIndices <- createDataPartition( resultsAllControlSiteRemoved$site, p = 0.5, list = FALSE )
+    trainingData <- resultsAllControlSiteRemoved[trainingIndices,]
+    trainingData <- trainingData[, !( names( trainingData ) %in% drops )]
+
+    brainAgeRF <- randomForest( age ~ ., data = trainingData, na.action = na.omit, replace = FALSE, ntree = 200 )
+
+    ## do controls ##
+
+    predictedAge <- predict( brainAgeRF, testingDataControls )
+    rmse <- sqrt( mean( ( ( testingDataControls$age - predictedAge )^2 ), na.rm = TRUE ) )
+    oneData <- data.frame( Site = site, RMSE = rmse, Dx = rep( "Control", length( rmse ) ) )
+    resultsData <- rbind( resultsData, oneData )
+
+    ## do autisms ##
+
+    if( nrow( testingDataAutism ) > 0 )
+      {
+      predictedAge <- predict( brainAgeRF, testingDataAutism )
+      rmse <- sqrt( mean( ( ( testingDataAutism$age - predictedAge )^2 ), na.rm = TRUE ) )
+      oneData <- data.frame( Site = site, RMSE = rmse, Dx = rep( "Autism", length( rmse ) ) )
+      resultsData <- rbind( resultsData, oneData )
+      }
+    }
+  close( pb )
+  }
+
+png( filename = "./Figures/siteAgePrediction.png", width = 8, height = 5, units = "in", res = 100 )
+agePredictionBoxPlot <- ggplot( resultsData, aes( x = Site, y = RMSE ) ) +
+  geom_boxplot( aes( fill = Dx ) ) +
+  scale_x_discrete( "Acquisition site", labels = levels( resultsData$Site ) ) +
+  scale_y_continuous( "RMSE (years)" ) +
+  theme( axis.text.x = element_text( angle = 45, hjust = 1 ) )
+#  theme( legend.position = "none" )
+  print( agePredictionBoxPlot )
+x <- dev.off()
+```
+-->
+
+![](Figures/siteAgePrediction.png)
