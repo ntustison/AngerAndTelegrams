@@ -893,10 +893,26 @@ print( xtable( significance ), type = "html", include.rownames = FALSE )
 # New stuff
 # QA/QC
 
+
+#
+
+## Is site predictive of diagnosis?
+
+```{r,results = 'asis', echo = F}
+library( xtable )
+results <- read.csv( './Data/labelresultsAntsSubset.csv' )
+fit <- summary( glm( dx.group ~ site, data = results, family = binomial ) )
+fitDataFrame <- data.frame( garbageName = fit$coefficients[,4] )
+colnames( fitDataFrame )[1] <- "Pr(>|z|)"
+print( xtable( fitDataFrame ), type = "html" )
+```
+
 ## Age prediction of controls:  Thickness
 
-<!--
 ```{r,results = 'asis', echo = F}
+
+if( 0 )
+{
 
 ###################################################################################################
 #
@@ -1032,7 +1048,9 @@ agePredictionBoxPlot <- ggplot( resultsData, aes( x = Site, y = RMSE ) ) +
 #  theme( legend.position = "none" )
   print( agePredictionBoxPlot )
 x <- dev.off()
+
+}
+
 ```
--->
 
 ![](Figures/siteAgePrediction.png)
